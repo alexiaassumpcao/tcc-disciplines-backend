@@ -1,0 +1,152 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tabela_teste {
+  nome  String? @db.VarChar
+  idade Int?
+  id    Int     @id
+}
+
+model User {
+  id         String       @id @default(uuid())
+  name       String?      @db.VarChar
+  email      String?      @unique @db.VarChar
+  password   String?      @db.VarChar
+  createdAt  DateTime     @default(now())
+  deletedAt  DateTime?
+  Student    Student[]
+  Cordinator Cordinator[]
+}
+
+model Student {
+  id                  String                @id @default(uuid())
+  userId              String
+  user                User                  @relation(fields: [userId], references: [id])
+  code                String                @unique @db.VarChar
+  course              String                @db.VarChar
+  preferenceId        String?
+  preference          Preference?           @relation(fields: [preferenceId], references: [id])
+  createdAt           DateTime              @default(now())
+  deletedAt           DateTime?
+  DisciplineCompleted DisciplineCompleted[]
+}
+
+model Cordinator {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+}
+
+model Preference {
+  id          String       @id @default(uuid())
+  name        String?      @unique @db.VarChar
+  disciplines Discipline[]
+  createdAt   DateTime     @default(now())
+  deletedAt   DateTime?
+  Student     Student[]
+}
+
+model Discipline {
+  id                  String                @id @default(uuid())
+  name                String?               @db.VarChar
+  code                String[]                
+  area                String                @db.VarChar
+  category            Category
+  preferences         Preference[]
+  createdAt           DateTime              @default(now())
+  deletedAt           DateTime?
+  DisciplineCompleted DisciplineCompleted[]
+}
+
+model DisciplineCompleted {
+  id           String     @id @default(uuid())
+  disciplineId String
+  studentId    String
+  discipline   Discipline @relation(fields: [disciplineId], references: [id])
+  note         Decimal
+  situation    Situation
+  createdAt    DateTime   @default(now())
+  deletedAt    DateTime?
+  Student      Student    @relation(fields: [studentId], references: [id])
+}
+
+model PreferenceQuestion {
+  id           String       @id @default(uuid())
+  text         String       @db.VarChar
+  uniqueName   String       @unique @db.VarChar
+  options      Json
+  questionType QuestionType
+  rate         Rate
+  createdAt    DateTime     @default(now())
+  deletedAt    DateTime?
+}
+
+model PreferencesSelected {
+  id                  String    @id @default(uuid())
+  studentId           String    @db.VarChar
+  total               Int
+  recommended         Int
+  personal            Int
+  percentageOfCorrect Decimal
+  createdAt           DateTime  @default(now())
+  deletedAt           DateTime?
+}
+
+model Problems {
+  id        String    @id @default(uuid())
+  text      String    @db.VarChar
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+}
+
+model DisciplinesSelected {
+  id           String    @id @default(uuid())
+  studentId    String
+  disciplineId String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now())
+  deletedAt    DateTime?
+}
+
+enum Category {
+  REQUIRED
+  OPTIONAL
+}
+
+enum QuestionType {
+  MULTI_OPTION
+  ONE_OPTION
+}
+
+enum Rate {
+  POSITIVE
+  NEGATIVE
+  NEUTRAL
+}
+
+enum Situation {
+  APR
+  APRN
+  REP
+  REPF
+  REPMF
+  REPN
+  REPNF
+  DISP
+  MATRICULADO
+  TRANS
+  REC
+  INCORP
+  CUMPRIU
+  CANC
+  TRANCADO
+}
