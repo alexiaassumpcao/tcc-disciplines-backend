@@ -43,7 +43,6 @@ function convertToWhereQuery(filters) {
             contains: filters[fields[index]]
         }
     }
-    console.log('whereQuery: ', whereQuery)
     return whereQuery
 }
 

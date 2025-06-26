@@ -73,7 +73,6 @@ export async function listPreferenceQuestions(req, res, prisma) {
 
 
 export async function testList(req, res, prisma) {
-    console.log("to no list selected")
     const { studentId } = req.query;
     try {
         const result = await listSelectedDisciplines(prisma, studentId)

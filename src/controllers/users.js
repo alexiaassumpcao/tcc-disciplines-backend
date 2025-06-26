@@ -157,7 +157,6 @@ export async function editUserPreference(req, res, prisma) {
     const { id } = req.params;
     try {
         const requestData = req.body;
-        console.log("requestData: ", requestData[0].selectedOptions)
         const user = await editPreference(prisma, id, requestData)
         res.status(200).send(JSON.stringify(user));
     } catch(e) {

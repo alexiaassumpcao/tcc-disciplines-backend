@@ -45,7 +45,7 @@ export async function isInUse(prisma, email, code) {
 }
 
 export async function createCordinator(prisma, cordinator){
-    console.log(cordinator)
+    console.log("Not implemented!")
 }
 
  
@@ -96,7 +96,6 @@ export async function updateUserStudent(prisma, userId, studentId, toBeUpdated) 
             course: toBeUpdated.course ?? Prisma.skip,
         },
     })
-    console.log("s: ", s)
     const u = await prisma.User.update({
         where: {
           id: userId,
@@ -106,7 +105,6 @@ export async function updateUserStudent(prisma, userId, studentId, toBeUpdated) 
             email: toBeUpdated.email ?? Prisma.skip,
         },
     })
-    console.log("u: ", u)
     return s
 }
 
@@ -121,7 +119,6 @@ export async function getById(prisma, id) {
 }
  
  export async function getStudentById(prisma, id) {
-    console.log("id: ", id)
     const result = await prisma.Student.findUnique({
         where: {
           id: id,
@@ -131,7 +128,6 @@ export async function getById(prisma, id) {
             user: true,
         }
     })
-    console.log("Student: ", result)
     return result
 }
 
