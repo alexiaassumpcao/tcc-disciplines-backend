@@ -1,4 +1,5 @@
 import { PreferencesSelected, SelectedDiscipline, SITUATION_APPROVED_VALUES } from "../models.js";
+import disciplines from "../routes/disciplines.js";
 
 
 export async function create(prisma, newDiscipline) {
@@ -10,14 +11,22 @@ export async function create(prisma, newDiscipline) {
 
 
 export async function list(prisma, filters) {
-    const result = await prisma.Discipline.findMany({
-        where: {
-            name: {
-                contains: filters.name
+    if (filters.name !== undefined) {
+        return await prisma.Discipline.findMany({
+            where: {
+                name: {
+                    contains: filters.name
+                },
+                deletedAt: null,
             }
-        }
-    })
-    return result
+        })
+    } else {
+        return await prisma.Discipline.findMany({
+            where: {
+                deletedAt: null,
+            }
+        })
+    }
 }
 
 /*
@@ -224,10 +233,13 @@ function parseToArrayOfSelectedDisciplines(studentId, requestData) {
 }
 
 
-export async function getStudentsSelectedDisciplines(prisma) {
-    return await prisma.DisciplinesSelected.findMany({
+export async function getStudentsSelectedDisciplines(prisma, studentId) {
+    const disciplines = await prisma.DisciplinesSelected.findMany({
         where: {
+            studentId: studentId,
             deletedAt: null,
-        }
+        },
     })
+    const disciplinesIds = getDisciplinesIds(disciplines)
+    return await getDisciplines(prisma, disciplinesIds)
 }

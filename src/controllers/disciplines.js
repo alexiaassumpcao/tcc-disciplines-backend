@@ -70,7 +70,8 @@ export async function selectedDisciplines(req, res, prisma) {
 
 export async function listSelectedPreferences(req, res, prisma) {
     try {
-        const result = await getStudentsSelectedDisciplines(prisma)
+        const { studentId } = req.query;
+        const result = await getStudentsSelectedDisciplines(prisma, studentId)
         res.status(200).send(JSON.stringify(result));
     } catch(e) {
         res.status(400).send(JSON.stringify(e))

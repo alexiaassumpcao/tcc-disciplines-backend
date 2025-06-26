@@ -1,5 +1,5 @@
 import express from "express";
-import { createDiscipline, getDisciplineById, getDisciplines, selectedDisciplines, updateDiscipline } from '../controllers/disciplines.js';
+import { createDiscipline, getDisciplineById, getDisciplines, selectedDisciplines, updateDiscipline, listSelectedPreferences } from '../controllers/disciplines.js';
 import { authenticateToken } from "../authMiddleware.js";
 
 const router = express.Router();
@@ -15,7 +15,7 @@ export default (prisma) => {
         selectedDisciplines(req, res, prisma)
     })
     router.get("/selected", authenticateToken, (req, res) => {
-        testList(req, res, prisma)
+        listSelectedPreferences(req, res, prisma)
     })
     router.get("/:id", (req, res) => {
         getDisciplineById(req, res, prisma)
