@@ -1,5 +1,4 @@
-import { create, deleteById, getById, getStudentsSelectedDisciplines, list, saveSelectedDisciplines, update } from "../services/disciplines.js";
-
+import { create, deleteById, getById, getStudentsSelectedDisciplines, list, saveSelectedDisciplines, update, listSelectedDisciplines } from "../services/disciplines.js";
 
 export async function createDiscipline(req, res, prisma) {
     try {
@@ -68,12 +67,24 @@ export async function selectedDisciplines(req, res, prisma) {
     }
 }
 
+
 export async function listSelectedPreferences(req, res, prisma) {
     try {
         const { studentId } = req.query;
         const result = await getStudentsSelectedDisciplines(prisma, studentId)
         res.status(200).send(JSON.stringify(result));
     } catch(e) {
+        res.status(400).send(JSON.stringify(e))
+    }
+}
+
+// deprecated
+export async function testList(req, res, prisma) {
+    const { studentId } = req.query;
+    try {
+        const result = await listSelectedDisciplines(prisma, studentId)
+        res.status(200).send(JSON.stringify(result));
+    } catch (e) {
         res.status(400).send(JSON.stringify(e))
     }
 }

@@ -1,5 +1,5 @@
 import express from "express";
-import { batchQuestions, createPreference, deletePreference, getPreference, getPreferenceById, listPreferenceQuestions, updatePreference, testList } from '../controllers/preferences.js';
+import { batchQuestions, createPreference, deletePreference, getPreference, getPreferenceById, listPreferenceQuestions, updatePreference } from '../controllers/preferences.js';
 import { authenticateToken } from "../authMiddleware.js";
 
 const router = express.Router();

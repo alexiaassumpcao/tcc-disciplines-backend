@@ -1,5 +1,5 @@
 import { Preference, PreferenceQuestion } from "../models.js";
-import { create, createManyQuestions, deleteById, getById, getByName, list, listQuestions, listSelectedDisciplines, update } from "../services/preferences.js";
+import { create, createManyQuestions, deleteById, getById, getByName, list, listQuestions, update } from "../services/preferences.js";
 
 export async function getPreferenceById(req, res, prisma) {
     const { id } = req.params;
@@ -65,17 +65,6 @@ export async function deletePreference(req, res, prisma) {
 export async function listPreferenceQuestions(req, res, prisma) {
     try {
         const result = await listQuestions(prisma)
-        res.status(200).send(JSON.stringify(result));
-    } catch (e) {
-        res.status(400).send(JSON.stringify(e))
-    }
-}
-
-
-export async function testList(req, res, prisma) {
-    const { studentId } = req.query;
-    try {
-        const result = await listSelectedDisciplines(prisma, studentId)
         res.status(200).send(JSON.stringify(result));
     } catch (e) {
         res.status(400).send(JSON.stringify(e))

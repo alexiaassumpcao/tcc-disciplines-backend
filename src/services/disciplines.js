@@ -18,12 +18,18 @@ export async function list(prisma, filters) {
                     contains: filters.name
                 },
                 deletedAt: null,
+            },
+            include: {
+                preferences: true,
             }
         })
     } else {
         return await prisma.Discipline.findMany({
             where: {
                 deletedAt: null,
+            },
+            include: {
+                preferences: true,
             }
         })
     }
@@ -241,4 +247,61 @@ export async function getStudentsSelectedDisciplines(prisma, studentId) {
     })
     const disciplinesIds = getDisciplinesIds(disciplines)
     return await getDisciplines(prisma, disciplinesIds)
+}
+
+// deprecated
+export async function listSelectedDisciplines(prisma, studentId) {
+    let whereQuery = {
+        where: {
+            deletedAt: {
+                equals: null
+            }
+        },
+        include: {
+            discipline: true,
+        }
+    }
+    if (studentId !== undefined && studentId !== "" && studentId !== null) {
+        whereQuery = {
+            where: {
+                deletedAt: {
+                    equals: null
+                },
+                studentId: {
+                    equals: studentId
+                }
+            },
+            include: {
+                discipline: true,
+            }
+        }
+    }
+    const result = await prisma.DisciplinesSelected.findMany({
+        where:{
+            studentId: {
+                equals: studentId
+            }
+        }
+    })
+    const onlyDisciplinesIds = result?.map((r) => {
+        return r?.disciplineId
+    })
+    const resultDisciplines = await prisma.Discipline.findMany({
+        where:{
+            id: {
+                in: onlyDisciplinesIds
+            }
+        }
+    })
+    const resultFormated = result?.map((s) => {
+        const discipline = resultDisciplines.filter((f) => f?.id === s?.disciplineId)[0]
+        return {
+            selectedId: s?.id,
+            studentId: s?.studentId,
+            disciplineId: s?.disciplineId,
+            disciplineName: discipline?.name,
+            disciplineCode: discipline?.code[0],
+        }
+    })
+    return resultFormated
 }
