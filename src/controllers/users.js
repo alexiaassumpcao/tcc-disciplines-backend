@@ -1,3 +1,4 @@
+import { forbiddenError, isValidOperationForTheUserAuthenticated } from "../authMiddleware.js";
 import { Cordinator } from "../models.js";
 import { createCordinator, 
     createStudent, deleteById, editPreference, getById, 
@@ -39,8 +40,7 @@ export async function createUser(req, res, prisma) {
         await createCordinator(cordinator)
         res.status(200).send('OK');
         return;
-    }
-    
+    }   
 }
 
 
@@ -58,6 +58,10 @@ export async function getUsers(req, res, prisma) {
 export async function updateUser(req, res, prisma) {
     const { id } = req.params;
     try {
+        if (!isValidOperationForTheUserAuthenticated(req.authUserId, id, prisma)) {
+            res.status(403).send(JSON.stringify(forbiddenError))
+            return;
+        }
         const requestData = req.body;
         const result = await update(prisma, id, requestData)
         
@@ -71,6 +75,10 @@ export async function updateStudent(req, res, prisma) {
     
     const { id, studentId } = req.params;
     try {
+        if (!isValidOperationForTheUserAuthenticated(req.authUserId, id, prisma)) {
+            res.status(403).send(JSON.stringify(forbiddenError))
+            return
+        }
         const requestData = req.body;
         const result = await updateUserStudent(prisma, id, studentId, requestData)
         
@@ -84,6 +92,10 @@ export async function getUserById(req, res, prisma) {
     const { id } = req.params;
     const { type } = req.query;
     try {
+        if (!isValidOperationForTheUserAuthenticated(req.authUserId, id, prisma)) {
+            res.status(403).send(JSON.stringify(forbiddenError))
+            return
+        }
         let result;
         if (type == "student") {
             result = await getStudentById(prisma, id)
@@ -99,6 +111,10 @@ export async function getUserById(req, res, prisma) {
 export async function getStdById(req, res, prisma) {
     const { id, studentId } = req.params;
     try {
+        if (!isValidOperationForTheUserAuthenticated(req.authUserId, studentId, prisma)) {
+            res.status(403).send(JSON.stringify(forbiddenError))
+            return
+        }
         const result = await getStudentById(prisma, studentId)
         res.status(200).send(JSON.stringify(result));
     } catch(e) {
@@ -118,6 +134,10 @@ export async function getCordById(req, res, prisma) {
 export async function deleteUserById(req, res, prisma) {
     const { id } = req.params;
     try {
+        if (!isValidOperationForTheUserAuthenticated(req.authUserId, id, prisma)) {
+            res.status(403).send(JSON.stringify(forbiddenError))
+            return
+        }
         await deleteById(prisma, id)
         
         res.status(204).send('OK');
@@ -156,6 +176,10 @@ export async function auth(req, res, prisma) {
 export async function editUserPreference(req, res, prisma) {
     const { id } = req.params;
     try {
+        if (!isValidOperationForTheUserAuthenticated(req.authUserId, id, prisma)) {
+            res.status(403).send(JSON.stringify(forbiddenError))
+            return
+        }
         const requestData = req.body;
         const user = await editPreference(prisma, id, requestData)
         res.status(200).send(JSON.stringify(user));

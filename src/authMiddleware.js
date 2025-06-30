@@ -14,3 +14,21 @@ export const authenticateToken = (req, res, next) => {
       next();
     });
   };
+
+  // the autenticated user can access only his own information
+export const isValidOperationForTheUserAuthenticated = async (authUserId, requestId, prisma) => {
+  if (authUserId == requestId) {
+    return true
+  } else {
+    const result = await prisma.Student.findUnique({
+      where: {
+        id: requestId,
+        userId: authUserId,
+        deletedAt: null
+      },
+    })
+    return result !== null
+  }
+}
+
+export const forbiddenError = { error: "Forbidden"}
